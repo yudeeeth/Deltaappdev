@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
@@ -25,14 +26,14 @@ public class game extends AppCompatActivity {
     int correctindex=0;
     int flag=0;
     int flag2=0;
-    int actualnum=0;
+    int flag3=0;
+    int red=0;
+
 
 
     public void reset (){
         flag=0;
     }
-
-
 
 
 
@@ -73,7 +74,6 @@ public class game extends AppCompatActivity {
 
         temp=rand.nextInt(3);
         option[temp]=correct;
-        correctindex=temp;
         temp=0;
         index=1;
         while(temp<=2){
@@ -100,6 +100,61 @@ public class game extends AppCompatActivity {
         final EditText input = (EditText) findViewById(R.id.input);
         final Button gen = (Button) findViewById(R.id.getopt);
 
+        if(savedInstanceState!=null){
+            flag=savedInstanceState.getInt("flag");
+            flag2=savedInstanceState.getInt("flag2");
+            option=savedInstanceState.getIntArray("option");
+            correct=savedInstanceState.getInt("correct");
+            correctindex=savedInstanceState.getInt("correctindex");
+            flag3=savedInstanceState.getInt("flag3");
+            red=savedInstanceState.getInt("red");
+        }
+        //set visibility
+        if(flag3==0){
+            input.setVisibility(View.VISIBLE);
+            t.setVisibility(View.INVISIBLE);
+            opt1.setVisibility(View.INVISIBLE);
+            opt2.setVisibility(View.INVISIBLE);
+            opt3.setVisibility(View.INVISIBLE);
+            if(flag2==1)
+                next.setVisibility(View.VISIBLE);
+            else
+                next.setVisibility(View.INVISIBLE);
+
+        }
+        else{
+            opt1.setText(Integer.toString(option[0]));
+            opt2.setText(Integer.toString(option[1]));
+            opt3.setText(Integer.toString(option[2]));
+            t.setText(Integer.toString(correctindex));
+            if(flag2==1) {
+                next.setVisibility(View.VISIBLE);
+                //get colored buttons
+                if(red==0)
+                    opt1.setBackgroundColor(Color.RED);
+                if(red==1)
+                    opt2.setBackgroundColor(Color.RED);
+                if(red==2)
+                    opt3.setBackgroundColor(Color.RED);
+                if(correct==Integer.parseInt(opt1.getText().toString()))
+                    opt1.setBackgroundColor(Color.GREEN);
+                if(correct==Integer.parseInt(opt2.getText().toString()))
+                    opt2.setBackgroundColor(Color.GREEN);
+                if(correct==Integer.parseInt(opt3.getText().toString()))
+                    opt3.setBackgroundColor(Color.GREEN);
+
+            }
+            else
+                next.setVisibility(View.INVISIBLE);
+            input.setVisibility(View.INVISIBLE);
+            t.setVisibility(View.VISIBLE);
+            opt1.setVisibility(View.VISIBLE);
+            opt2.setVisibility(View.VISIBLE);
+            opt3.setVisibility(View.VISIBLE);
+
+        }
+
+
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -122,11 +177,14 @@ public class game extends AppCompatActivity {
                         input.setVisibility(View.INVISIBLE);
                         t.setVisibility(View.VISIBLE);
                         t.setText(val);
+
+
                         //add toast;
                         flag = 1;
                         int number = Integer.parseInt(val);
-
+                        correctindex=number;
                         generatefuntion(number);
+                        flag3=1;
 
                         opt1.setText(Integer.toString(option[0]));
                         opt1.setVisibility(View.VISIBLE);
@@ -154,6 +212,7 @@ public class game extends AppCompatActivity {
                 input.setVisibility(View.VISIBLE);
                 t.setVisibility(View.INVISIBLE);
                 flag2=0;
+                flag3=0;
             }
         });
 
@@ -167,8 +226,10 @@ public class game extends AppCompatActivity {
             if (Integer.parseInt(opt1.getText().toString())==correct) {
                 opt1.setBackgroundColor(Color.GREEN);
                 input.setText("");
+                red=3;
             }
             else {
+                red=0;
                 opt1.setBackgroundColor(Color.RED);
                 if(correct==Integer.parseInt(opt1.getText().toString()))
                 opt1.setBackgroundColor(Color.GREEN);
@@ -196,8 +257,10 @@ public class game extends AppCompatActivity {
                 if (Integer.parseInt(opt2.getText().toString())==correct) {
                     opt2.setBackgroundColor(Color.GREEN);
                     input.setText("");
+                    red=3;
                 }
                 else {
+                    red=1;
                     opt2.setBackgroundColor(Color.RED);
                     if(correct==Integer.parseInt(opt1.getText().toString()))
                     opt1.setBackgroundColor(Color.GREEN);
@@ -223,8 +286,10 @@ public class game extends AppCompatActivity {
                 if (Integer.parseInt(opt3.getText().toString())==correct) {
                     opt3.setBackgroundColor(Color.GREEN);
                     input.setText("");
+                    red=3;
                 }
                 else {
+                    red=2;
                     opt3.setBackgroundColor(Color.RED);
                     if(correct==Integer.parseInt(opt1.getText().toString()))
                     opt1.setBackgroundColor(Color.GREEN);
@@ -242,4 +307,19 @@ public class game extends AppCompatActivity {
 
 
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putInt("flag",flag);
+        outState.putInt("flag2",flag2);
+        outState.putIntArray("option",option);
+        outState.putInt("correct",correct);
+        outState.putInt("correctindex",correctindex);
+        outState.putInt("flag3",flag3);
+        outState.putInt("red",red);
+    }
+
+
 }
